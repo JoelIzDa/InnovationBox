@@ -1,0 +1,162 @@
+name: $(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyy-MM-dd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+    - main
+    - features/*
+    - refs/tags/releases/*
+
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+    - group: oiz-ibox
+    - name: environment
+      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/features/') }}:
+       value: 'dev'
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+       value: 'int'
+      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/releases/') }}:
+       value: 'prd'
+
+    - name: serviceconnect
+      ${{ if eq(variables['environment'], 'dev') }}:
+       value: "devops-pipeline-onln-oiz-dev-ibox - TIEITF"
+      ${{ if eq(variables['environment'], 'int') }}:
+       value: "devops-pipeline-onln-oiz-int-ibox - TIEI"
+      ${{ if eq(variables['environment'], 'prd') }}:
+       value: "devops-pipeline-onln-oiz-prd-ibox - SZH"
+
+stages:
+# === BUILD STAGE ===
+- stage: BUILD
+  displayName: 'Build'
+  jobs:
+    - job: BuildJob
+      steps:
+        - task: PowerShell@2
+          name: setVars
+          displayName: 'Load Parameters'
+          inputs:
+            targetType: filePath
+            filePath: "$(Build.SourcesDirectory)/devops/scripts/envload.ps1"
+          env:
+            DEPLOY_ENVIRONMENT: $(environment)
+
+# === DEPLOY STAGE ===
+- stage: DEPLOY
+  displayName: 'Deploy'
+  dependsOn: BUILD
+  variables:
+    area: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.area'] ]
+    appname: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.appname'] ]
+    location: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.location'] ]
+    num: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.num'] ]
+    addressPrefix: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.addressPrefix'] ]
+    tenantId: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.tenantId'] ]
+    adminusername: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.adminusername'] ]
+    vmsize: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.vmsize'] ]
+    imagesku: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.imagesku'] ]
+    imageoffer: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.imageoffer'] ]
+    imagepublisher: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.imagepublisher'] ]
+    imageversion: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.imageversion'] ]
+    aCUAgroupFATId: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.aCUAgroupFATId'] ]
+    wvdspnId: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.wvdspnId'] ]
+    wltype: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.wltype'] ]
+    da: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.da'] ]
+    displayName: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.displayName'] ]
+    shutdownTime: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.shutdownTime'] ]
+    diskSizeGB: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.diskSizeGB'] ]
+    storageAccountType: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.storageAccountType'] ]
+    subscriptionId: $[ stageDependencies.BUILD.BuildJob.outputs['setVars.subscriptionId'] ]
+  jobs:
+    - job: DeployJob
+      steps:
+      - task: AzurePowerShell@5
+        displayName: 'Register Encryption Feature'
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          ScriptType: filePath
+          scriptPath: '$(Build.SourcesDirectory)/devops/scripts/encryption.ps1'
+          azurePowerShellVersion: 'LatestVersion'
+          pwsh: true
+      
+      - task: AzureCLI@2
+        displayName: 'Deploy Resource Groups' 
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            Write-Host "[Automation] Checking or deploying resource groups..."
+            $routput = az deployment sub create --location "$(location)" --template-file "$(Build.SourcesDirectory)/bicep/templates/resourceGroup.bicep" --parameters appname="$(appname)" area="$(area)" num="$(num)" location="$(location)" wltype="$(wltype)" da="$(da)"
+            Write-Host "[Automation] Set output for the resource group module..."
+            $jsonResult = $routput | ConvertFrom-Json
+            $workloadResourceGroupName = $jsonResult.properties.outputs.workloadResourceGroupName.value
+            $networkResourceGroupName = $jsonResult.properties.outputs.networkResourceGroupName.value
+            Write-Host "[Automation] Workload Resource Group Name: $workloadResourceGroupName"
+            Write-Host "[Automation] Network Resource Group Name: $networkResourceGroupName"
+            Write-Host "##vso[task.setvariable variable=workloadResourceGroupName]$workloadResourceGroupName"
+            Write-Host "##vso[task.setvariable variable=networkResourceGroupName]$networkResourceGroupName"
+
+      - task: AzureCLI@2
+        displayName: 'Deploy Network and Workload Resources'
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            Write-Host "[Automation] Checking or deploying network resources..."
+            $noutput = az deployment group create --resource-group $(networkResourceGroupName) --template-file "$(Build.SourcesDirectory)/bicep/nwrgMain.bicep" --parameters area=$(area) appname=$(appname) addressPrefix=$(addressPrefix) num=$(num) wltype=$(wltype) da=$(da)
+            Write-Host "[Automation] Set output for the network module..."
+            $jsonResult = $noutput | ConvertFrom-Json
+            $nsgId = $jsonResult.properties.outputs.nsgId.value
+            $subnetId = $jsonResult.properties.outputs.subnetId.value
+            Write-Host "[Automation] Checking or deploying workload resources ..."
+            $woutput = az deployment group create --resource-group $(workloadResourceGroupName) --template-file "$(Build.SourcesDirectory)/bicep/wlrgMain.bicep" --parameters location=$(location) appname=$(appname) area=$(area) num=$(num) tenantId=$(tenantId) adminpassword=$(adminpassword) adminusername=$(adminusername) vmsize=$(vmsize) imagesku=$(imagesku) imageoffer=$(imageoffer) imagepublisher=$(imagepublisher) imageversion=$(imageversion) aCUAgroupFATId=$(aCUAgroupFATId) wvdspnId=$(wvdspnId) subnetId=$subnetId nsgId=$nsgId wltype=$(wltype) da=$(da) shutdownTime=$(shutdownTime) diskSizeGB=$(diskSizeGB) storageAccountType=$(storageAccountType)
+            Write-Host "[Automation] Set output for the AVD configuration..."
+            $jsonResult = $woutput | ConvertFrom-Json
+            $vmName = $jsonResult.properties.outputs.vmName.value
+            $hostpoolName = $jsonResult.properties.outputs.hostpoolName.value
+            $applicationGroupName = $jsonResult.properties.outputs.applicationGroupName.value
+            Write-Host "##vso[task.setvariable variable=vmName]$vmName"
+            Write-Host "##vso[task.setvariable variable=hostpoolName]$hostpoolName"
+            Write-Host "##vso[task.setvariable variable=applicationGroupName]$applicationGroupName"
+            Write-Host "##vso[task.setvariable variable=workspaceName]$workspaceName"
+
+      - task: AzurePowerShell@5
+        displayName: 'Hostpool Join'
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          ScriptType: InlineScript
+          azurePowerShellVersion: 'LatestVersion'
+          pwsh: true
+          Inline: |
+            & "$(Build.SourcesDirectory)/devops/scripts/vmstatusCheck.ps1" -resourceGroupName $(workloadResourceGroupName) -vmName $(vmName)
+            $scriptContent = Get-Content -Path "$(Build.SourcesDirectory)/devops/scripts/hostpoolreg.ps1" -Raw
+            New-AzWvdRegistrationInfo -ResourceGroupName $(workloadResourceGroupName) -HostPoolName $(hostpoolName) -ExpirationTime (Get-Date).ToUniversalTime().AddHours(12)
+            $registrationInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $(workloadResourceGroupName) -HostPoolName $(hostpoolName)
+            Invoke-AzVMRunCommand -ResourceGroupName $(workloadResourceGroupName) -VMName $(vmName) -CommandId 'RunPowerShellScript' -ScriptString $scriptContent -Parameter @{ "token" = $registrationInfo.Token }
+
+      - task: AzurePowerShell@5
+        displayName: 'Host Configuration'
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          scriptType: filePath
+          scriptPath: "$(Build.SourcesDirectory)/devops/scripts/hostconfig.ps1"
+          scriptArguments: >
+            -applicationGroup '$(applicationGroupName)' -resourceGroup '$(workloadResourceGroupName)' -hostPool '$(hostpoolName)' -displayName '$(displayName)'
+          azurePowerShellVersion: latestVersion
+          pwsh: true
+
+      - task: AzurePowerShell@5
+        displayName: 'Deployment Infos'
+        inputs:
+          azureSubscription: '$(serviceconnect)'
+          ScriptType: InlineScript
+          azurePowerShellVersion: 'LatestVersion'
+          pwsh: true
+          Inline: |
+            & "$(Build.SourcesDirectory)/devops/scripts/generateReport.ps1" -environment '$(environment)' -workspaceName '$(workspaceName)' -resourceGroup '$(workloadResourceGroupName)' -vmName '$(vmName)' -hostpoolName '$(hostpoolName)' -applicationGroupName '$(applicationGroupName)' -displayName '$(displayName)' -location '$(location)' -vmsize '$(vmsize)' -imagesku '$(imagesku)' -imageoffer '$(imageoffer)' -imagepublisher '$(imagepublisher)' -imageversion '$(imageversion)' -shutdownTime '$(shutdownTime)' -diskSizeGB '$(diskSizeGB)' -adminusername '$(adminusername)' -subscriptionId '$(subscriptionId)'
