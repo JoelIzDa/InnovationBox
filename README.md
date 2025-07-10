@@ -17,6 +17,7 @@ The test environment is introduced within a complex and growing cloud ecosystem 
   - [Task: Hostpool Join](#task-hostpool-join)
   - [Task: Host Configuration](#task-host-configuration)
   - [Task: Deployment Infos](#task-deployment-infos)
+- [User Interface](#user-interface)
 
 ## Resource Architecture
 The architecture consists of two main components: the on-premises environment and the Azure cloud environment. Within the on-premises Active Directory (App CI), users are assigned to a security group which defines who is entitled to access the Innobox environment. These permissions are automatically applied during deployment via the central DevOps pipeline (ibox-pipeline.yml). This pipeline is triggered by any code changes, and it orchestrates the deployment process using the Azure Resource Manager (ARM) and Bicep templates to provision the required resources.
@@ -41,6 +42,8 @@ This modular design enables rapid adaptation to new use cases without requiring 
 
 ## Pipeline Tasks
 The central DevOps pipeline is built to support deployments across multiple environments. The target environment is automatically selected based on the Git branch that triggers the pipeline (e.g. dev, int, or prd). The pipeline is divided into two main stages: Build and Deploy, each comprising a set of well-defined tasks executed sequentially.
+
+![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/deployment.png)
 
 ### Task: Load Parameters
 A PowerShell task that reads configuration values from the config.json file and sets them as environment variables for use in later steps. This ensures that all templates and scripts operate with consistent and dynamically loaded settings.
@@ -67,3 +70,8 @@ The final task generates a detailed deployment summary, including the VM's IP ad
 
 
 ![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/DeploymentOverview.png)
+
+## User Interface
+
+![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/windowsapp.png)
+
