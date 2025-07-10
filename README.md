@@ -6,3 +6,5 @@ The Innobox enables users to evaluate and experiment with various Azure services
 This offering aims to lower the barrier to entry for cloud adoption by allowing departments to explore Azure technologies in a low-risk setting. At the same time, it reduces the likelihood of costly project failures caused by unmet expectations or insufficient understanding of cloud capabilities.
 
 The test environment is introduced within a complex and growing cloud ecosystem comprising multiple tenants and over 200 Azure subscriptions, expanding at a rate of approximately 100 subscriptions per year. Throughout this landscape, security and compliance are treated as critical priorities, and all solutions are developed in alignment with established governance and regulatory standards.
+
+![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/plan.png)
