@@ -37,6 +37,8 @@ A PowerShell task that reads configuration values from the config.json file and 
 ### Task: Register Encryption Feature
 This PowerShell task enables the encryption at host feature within the Azure subscription. This feature must be registered before any virtual machines can be deployed with encryption enabled.
 
+![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/encryption-at-host-comparison.jpg)
+
 ### Task: Deploy Resource Groups
 An Azure CLI task that creates the workload resource group where the main components will be deployed. The network resource group is referenced as existing since it was created during the initial subscription setup and is reused here.
 
