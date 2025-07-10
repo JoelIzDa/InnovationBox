@@ -1,0 +1,52 @@
+{
+  "default": {
+    "adminusername": "vmadmin",
+    "imageoffer": "Windows-11",
+    "imagepublisher": "MicrosoftWindowsDesktop",
+    "imagesku": "win11-24h2-avd",
+    "imageversion": "latest",
+    "vmsize": "Standard_D8s_v5",
+    "Encryptionathost": true,
+    "location": "SwitzerlandNorth",
+    "appname": "",
+    "wltype": "",
+    "da": "",
+    "num": "",
+    "displayName": "InnovationBox",
+    "shutdownTime": "18:00",
+    "diskSizeGB": 128,
+    "storageAccountType": "Premium_LRS"
+  },
+  "environment": {
+    "dev": {
+      "area": "dev",
+      "spnId": "",
+      "subscriptionId": "",
+      "aCUAgroupFATId": "",
+      "cAPPgroupAId": "",
+      "tenantId": "",
+      "wvdspnId": "",
+      "addressPrefix": "xx.xx.xx.xx/28"
+    },
+    "int": {
+      "area": "int",
+      "spnId": "",
+      "subscriptionId": "",
+      "aCUAgroupFATId": "",
+      "cAPPgroupAId": "",
+      "tenantId": "",
+      "wvdspnId": "",
+      "addressPrefix": "xx.xx.xx.xx/28"
+    },
+    "prd": {
+      "area": "prd",
+      "spnId": "",
+      "subscriptionId": "",
+      "aCUAgroupFATId": "",
+      "cAPPgroupAId": "",
+      "tenantId": "",
+      "wvdspnId": "",
+      "addressPrefix": "xx.xx.xx.xx/28"
+    }
+  }
+}
