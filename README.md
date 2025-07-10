@@ -7,6 +7,17 @@ This offering aims to lower the barrier to entry for cloud adoption by allowing 
 
 The test environment is introduced within a complex and growing cloud ecosystem comprising multiple tenants and over 200 Azure subscriptions, expanding at a rate of approximately 100 subscriptions per year. Throughout this landscape, security and compliance are treated as critical priorities, and all solutions are developed in alignment with established governance and regulatory standards.
 
+- [Resource Architecture](#resource-architecture)
+- [Dynamic Configuration](#dynamic-configuration)
+- [Pipeline Tasks](#pipeline-tasks)
+  - [Task: Load Parameters](#task-load-parameters)
+  - [Task: Register Encryption Feature](#task-register-encryption-feature)
+  - [Task: Deploy Resource Groups](#task-deploy-resource-groups)
+  - [Task: Deploy Network and Workload Resources](#task-deploy-network-and-workload-resources)
+  - [Task: Hostpool Join](#task-hostpool-join)
+  - [Task: Host Configuration](#task-host-configuration)
+  - [Task: Deployment Infos](#task-deployment-infos)
+
 ## Resource Architecture
 The architecture consists of two main components: the on-premises environment and the Azure cloud environment. Within the on-premises Active Directory (App CI), users are assigned to a security group which defines who is entitled to access the Innobox environment. These permissions are automatically applied during deployment via the central DevOps pipeline (ibox-pipeline.yml). This pipeline is triggered by any code changes, and it orchestrates the deployment process using the Azure Resource Manager (ARM) and Bicep templates to provision the required resources.
 
