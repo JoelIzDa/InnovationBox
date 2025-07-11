@@ -32,7 +32,8 @@ The deployed environment includes a minimal Azure Virtual Desktop (AVD) setup wi
 ![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/plan.png)
 
 ## Network
-
+This is a WL2 product!
+![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/network.png)
 
 
 
