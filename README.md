@@ -10,6 +10,7 @@ This offering aims to lower the barrier to entry for cloud adoption by allowing 
 The test environment is introduced within a complex and growing cloud ecosystem comprising multiple tenants and over 200 Azure subscriptions, expanding at a rate of approximately 100 subscriptions per year. Throughout this landscape, security and compliance are treated as critical priorities, and all solutions are developed in alignment with established governance and regulatory standards.
 
 - [Resource Architecture](#resource-architecture)
+- [Network](#Network)
 - [Dynamic Configuration](#dynamic-configuration)
 - [Pipeline Tasks](#pipeline-tasks)
   - [Task: Load Parameters](#task-load-parameters)
@@ -28,8 +29,12 @@ The deployment assumes that certain core resources—marked as (existing)—are 
 
 The deployed environment includes a minimal Azure Virtual Desktop (AVD) setup with predefined parameters to provide a functional starting point for customers. These parameters can be modified at any time, allowing customers to adapt the setup to their individual needs.
 
-
 ![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/plan.png)
+
+## Network
+
+
+
 
 ## Dynamic Configuration
 The entire deployment process is designed with full parameterisation to allow flexible and reusable configurations across different environments. All parameters are centrally managed in a config.json file, which defines both default and environment-specific settings.
