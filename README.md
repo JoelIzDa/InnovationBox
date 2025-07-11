@@ -84,24 +84,24 @@ The final task generates a detailed deployment summary, including the VM's IP ad
 
 ## Testing
 As part of my work, I carried out various tests to check the functionality of the environment. The table below shows exactly what was tested:
-| Test type   | Designation | Method |
-| -------- | ------- | ------- |
-| Unit | Check EncryptionAtHost registry script.| Check status of the feature after the deployment with ps command Get-AzProviderFeature -FeatureName "EncryptionAtHost" -ProviderNamespace "Microsoft.Compute" |
-| Unit | Deploy resource group bicep file with CLI| Execute the bicep file with Azure CLI "az deployment sub create --location "SwitzerlandNorth" --template-file .\resourceGroup.bicep --parameters appname="ibox" area="dev" location="SwitzerlandNorth num="01""| 
-| Unit | Deploy network bicep-module with CLI | Execute the bicep file with Azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-nwrg-01" --template-file .\networkMdl.bicep --parameters XX" |
-| Integration | Deploy virtual machine with CLI | Execute bicep file with azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadResources.bicep --parameters XX"|
-| Integration | Deploy AVD Components with CLI. (Workload Main bicep file) | Execute bicep file with azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadResources.bicep --parameters XX"|
-| Integration | Role Assignments (Workload-Bicep) | Check in the Azure Portal, if the role assignments from the deployment exist|
-| Integration | Full Deployment of the Workload Module with CLI| Execute the bicep file with Azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadMdl.bicep --parameters XX" |
-| Integration | Check the Auto-Start Feaure| Check in the Windows App, if the vm starts at user connection even when its deallocated.|
-| Integration | Check CPU and RAM status| Check in the Protal with azure metrics function.|
-| Integration | Check if the subnet is correctly implemented in the existing vnet | Execute Azure CLI command in the Cloud Shell "az network vnet subnet show --ids" |
-| Integration | Check IP-assignment and NIC| Execute Azure CLI command in the Cloud Shell"az network nic show --ids" |
-| Integration | Prüfen, ob die VM korrekt deployed wurde inkl. Hostpool join. | |
-| Integration | Prüfen, ob die VM Entra ID joined ist  | |
-| Integration | Prüfen, Auto-Shutdown funktioniert  | |
-| Integration | Prüfen, ob Tags vorhanden sind  | |
-| End-to-End | Verbindung zur AVD prüfen  | |
-| End-to-End | Gesamtes Deployment in die Integration prüfen  | |
-| End-to-End | Prüfen, ob AVD Konfiguration vollständig ist  | |
+| Test type   | Designation | Method | Status |
+| -------- | ------- | ------- | ------- |
+| Unit | Check EncryptionAtHost registry script.| Check status of the feature after the deployment with ps command Get-AzProviderFeature -FeatureName "EncryptionAtHost" -ProviderNamespace "Microsoft.Compute" | [x] |
+| Unit | Deploy resource group bicep file with CLI| Execute the bicep file with Azure CLI "az deployment sub create --location "SwitzerlandNorth" --template-file .\resourceGroup.bicep --parameters appname="ibox" area="dev" location="SwitzerlandNorth num="01""| [x] |
+| Unit | Deploy network bicep-module with CLI | Execute the bicep file with Azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-nwrg-01" --template-file .\networkMdl.bicep --parameters XX" |[x] |
+| Integration | Deploy virtual machine with CLI | Execute bicep file with azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadResources.bicep --parameters XX"|[x] |
+| Integration | Deploy AVD Components with CLI. (Workload Main bicep file) | Execute bicep file with azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadResources.bicep --parameters XX"| [x]|
+| Integration | Role Assignments (Workload-Bicep) | Check in the Azure Portal, if the role assignments from the deployment exist|[x] |
+| Integration | Full Deployment of the Workload Module with CLI| Execute the bicep file with Azure CLI "az deployment group create --resource-group "onln-oiz-dev-ibox-wlrg-01" --template-file .\workloadMdl.bicep --parameters XX" |[x] |
+| Integration | Check the Auto-Start Feaure| Check in the Windows App, if the vm starts at user connection even when its deallocated.| [x]|
+| Integration | Check CPU and RAM status| Check in the Protal with azure metrics function.|[x] |
+| Integration | Check if the subnet is correctly implemented in the existing vnet | Execute Azure CLI command in the Cloud Shell "az network vnet subnet show --ids" |[x] |
+| Integration | Check IP-assignment and NIC| Execute Azure CLI command in the Cloud Shell"az network nic show --ids" |[x] |
+| Integration | Prüfen, ob die VM korrekt deployed wurde inkl. Hostpool join. | | [x]|
+| Integration | Prüfen, ob die VM Entra ID joined ist  | | [x]|
+| Integration | Prüfen, Auto-Shutdown funktioniert  | |[x] |
+| Integration | Prüfen, ob Tags vorhanden sind  | |[x] |
+| End-to-End | Verbindung zur AVD prüfen  | |[x] |
+| End-to-End | Gesamtes Deployment in die Integration prüfen  | |[x] |
+| End-to-End | Prüfen, ob AVD Konfiguration vollständig ist  | |[x] |
 
