@@ -27,6 +27,8 @@ The deployment assumes that certain core resources—marked as (existing)—are 
 
 The deployed environment includes a minimal Azure Virtual Desktop (AVD) setup with predefined parameters to provide a functional starting point for customers. These parameters can be modified at any time, allowing customers to adapt the setup to their individual needs.
 
+**There are some resources that aren't served within the deployment. Those have to be created before the deployment gets executed!**
+
 ![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/newArchitecture.png)
 
 ## Network
