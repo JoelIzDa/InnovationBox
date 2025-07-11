@@ -27,7 +27,7 @@ The deployment assumes that certain core resources—marked as (existing)—are 
 
 The deployed environment includes a minimal Azure Virtual Desktop (AVD) setup with predefined parameters to provide a functional starting point for customers. These parameters can be modified at any time, allowing customers to adapt the setup to their individual needs.
 
-![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/plan.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/newArchitecture.png)
 
 ## Network
 The innovation box is an online product and is not configured for an on-premise connection. No incoming connections are explicitly prohibited, as no sensitive data may be stored on the AVD. However, the low network security allows seamless access from any location. Customers access the public IP. The traffic is then monitored by the NSG and forwarded to the NIC. The NIC is directly connected to the subnet. The outgoing network traffic functions via the route table, which is configured very simply. All connections go directly to the Internet and not via an internally configured firewall. I had to disarm some of the resources, as they are not allowed to go public.
