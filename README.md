@@ -1,7 +1,5 @@
 # Azure: InnovationBox
-First of all... Welcome to my newest project in 2025!
-
-A standardized Azure-based test environment, known as the “Innobox”, is being developed and offered as a service product within an existing enterprise cloud infrastructure. It is designed to provide internal departments with a preconfigured environment for testing purposes, limited to a maximum usage period of six months. This time constraint is defined as an organisational guideline and is included in the service description. It is not technically enforced but serves to clarify that the environment is not intended for long-term or productive use.
+This Project describes howa standardized Azure-based test environment, known as the “Innobox”, is being developed and offered as a service product within an existing enterprise cloud infrastructure. It is designed to provide internal departments with a preconfigured environment for testing purposes, limited to a maximum usage period of six months. This time constraint is defined as an organisational guideline and is included in the service description. It is not technically enforced but serves to clarify that the environment is not intended for long-term or productive use.
 
 The Innobox enables users to evaluate and experiment with various Azure services such as those available through the Azure Marketplace in a secure and isolated environment. The infrastructure is deployed entirely through Infrastructure as Code (IaC), ensuring consistency, automation, and scalability across all deployments.
 
