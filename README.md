@@ -27,12 +27,12 @@ The deployment assumes that certain core resources—marked as (existing)—are 
 
 The deployed environment includes a minimal Azure Virtual Desktop (AVD) setup with predefined parameters to provide a functional starting point for customers. These parameters can be modified at any time, allowing customers to adapt the setup to their individual needs.
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/plan.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/plan.png)
 
 ## Network
 The innovation box is an online product and is not configured for an on-premise connection. No incoming connections are explicitly prohibited, as no sensitive data may be stored on the AVD. However, the low network security allows seamless access from any location. Customers access the public IP. The traffic is then monitored by the NSG and forwarded to the NIC. The NIC is directly connected to the subnet. The outgoing network traffic functions via the route table, which is configured very simply. All connections go directly to the Internet and not via an internally configured firewall. I had to disarm some of the resources, as they are not allowed to go public.
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/network.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/network.png)
 
 ## Dynamic Configuration
 The entire deployment process is designed with full parameterisation to allow flexible and reusable configurations across different environments. All parameters are centrally managed in a config.json file, which defines both default and environment-specific settings.
@@ -48,7 +48,7 @@ This modular design enables rapid adaptation to new use cases without requiring 
 ## Pipeline Tasks
 The central DevOps pipeline is built to support deployments across multiple environments. The target environment is automatically selected based on the Git branch that triggers the pipeline (e.g. dev, int, or prd). The pipeline is divided into two main stages: Build and Deploy, each comprising a set of well-defined tasks executed sequentially.
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/deployment.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/deployment.png)
 
 ### Task: Load Parameters
 A PowerShell task that reads configuration values from the config.json file and sets them as environment variables for use in later steps. This ensures that all templates and scripts operate with consistent and dynamically loaded settings.
@@ -56,7 +56,7 @@ A PowerShell task that reads configuration values from the config.json file and 
 ### Task: Register Encryption Feature
 This PowerShell task enables the encryption at host feature within the Azure subscription. This feature must be registered before any virtual machines can be deployed with encryption enabled.
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/encryption-at-host-comparison.jpg)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/encryption-at-host-comparison.jpg)
 
 ### Task: Deploy Resource Groups
 An Azure CLI task that creates the workload resource group where the main components will be deployed. The network resource group is referenced as existing since it was created during the initial subscription setup and is reused here.
@@ -74,9 +74,9 @@ A PowerShell task that updates the display name of the session host and enables 
 The final task generates a detailed deployment summary, including the VM's IP address and other key resource information. This summary serves as a quick reference for verification and documentation purposes.
 
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/DeploymentOverview.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/DeploymentOverview.png)
 
 ## User Interface
 
-![Alt text of the image](https://github.com/JoelIzDa/InnovationBox/blob/main/images/windowsapp.png)
+![Alt text of the image](https://github.com/joelschellenberg/InnovationBox/blob/main/images/windowsapp.png)
 
